@@ -18,7 +18,7 @@ class Questions extends StatefulWidget {
 class _QuestionsState extends State<Questions> {
   List<dynamic> questions = [];
   int indice = 0, pontos = 0, opcao = -1;
-  bool habilitarProxima = false;
+  bool respondendo = true;
 
   @override
   initState() {
@@ -50,7 +50,7 @@ class _QuestionsState extends State<Questions> {
     }
   }
 
-  void alternativa() {
+  void responder() {
     if (questions[indice]['correct'] - 1 == opcao) {
       pontos++;
       Janelas.msgDialog(
@@ -66,8 +66,7 @@ class _QuestionsState extends State<Questions> {
       );
     }
     setState(() {
-      habilitarProxima = true;
-      opcao = -1;
+      respondendo = false;
     });
   }
 
@@ -75,8 +74,8 @@ class _QuestionsState extends State<Questions> {
     if (indice < questions.length - 1) {
       setState(() {
         indice++;
+        respondendo = true;
         opcao = -1;
-        habilitarProxima = false;
       });
     } else {
       Janelas.msgDialog("Fim do quiz", "Você fez $pontos pontos", context);
@@ -123,17 +122,18 @@ class _QuestionsState extends State<Questions> {
                             (i) => RadioListTile(
                               title: Text(questions[indice]['answers'][i]),
                               value: i,
+                              enabled: respondendo,
                             ),
                           ),
                         ],
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: opcao == -1 ? null : alternativa,
+                      onPressed: opcao == -1 || !respondendo ? null : responder,
                       child: Text("Responder"),
                     ),
                     ElevatedButton(
-                      onPressed: habilitarProxima ? proxima : null,
+                      onPressed: respondendo ? null : proxima,
                       child: Text("Próxima questão"),
                     ),
                   ],
@@ -143,28 +143,34 @@ class _QuestionsState extends State<Questions> {
                   spacing: 20,
                   children: [
                     Text(questions[indice]['question']),
-                    ...List.generate(
-                      questions[indice]['answers'].length,
-                      (i) => Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                          color: AppColors.c4,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: AppColors.c2, width: 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.t2,
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 20,
+                      children: [
+                        ...List.generate(
+                          questions[indice]['answers'].length,
+                          (i) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColors.c4,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: AppColors.c2, width: 1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.t2,
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
                             ),
-                          ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(questions[indice]['answers'][i]),
+                            ),
+                          ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(questions[indice]['answers'][i]),
-                        ),
-                      ),
+                      ],
                     ),
                     ElevatedButton(
                       onPressed: () {
