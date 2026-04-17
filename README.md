@@ -16,7 +16,7 @@ App simples de quiz que consome dados de uma Mockup API **JSON** hospedada em um
 |Conversão de dados|json.encode(), json.decode()|
 |Opções|RadioGroup() RadioListTile()|
 |Botões de controle de conteúdos em tela|ElevatedButton()|
-|[Arrastar e soltas](./drag.md)|Draggable()DragTarget()|
+|[Arrastar e soltar](./drag.md)|Draggable()DragTarget()|
 
 # Para testar
 - 1 Clone o repositório
