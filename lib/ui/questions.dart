@@ -149,24 +149,67 @@ class _QuestionsState extends State<Questions> {
                       children: [
                         ...List.generate(
                           questions[indice]['answers'].length,
-                          (i) => Container(
-                            margin: const EdgeInsets.symmetric(vertical: 5),
-                            decoration: BoxDecoration(
-                              color: AppColors.c4,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(color: AppColors.c2, width: 1),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.t2,
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
+                          (i) => Draggable<int>(
+                            data: indice,
+                            feedback: Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors.c4,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: AppColors.c2,
+                                  width: 1,
                                 ),
-                              ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  questions[indice]['answers'][i],
+                                  style: TextStyle(
+                                    color: AppColors.c1,
+                                    fontSize: 16,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(questions[indice]['answers'][i]),
+                            childWhenDragging: Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors.c3,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: AppColors.c2,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(questions[indice]['answers'][i]),
+                              ),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors.c4,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: AppColors.c2,
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.t2,
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(questions[indice]['answers'][i]),
+                              ),
                             ),
                           ),
                         ),

@@ -8,7 +8,7 @@ abstract class AppTheme {
         foregroundColor: WidgetStatePropertyAll(AppColors.c4),
         backgroundColor: WidgetStateProperty.fromMap({
           WidgetState.pressed: AppColors.c1,
-          WidgetState.hovered: AppColors.c2,
+          WidgetState.hovered: AppColors.c3,
           WidgetState.disabled: AppColors.t2,
           WidgetState.any: AppColors.c1,
         }),
