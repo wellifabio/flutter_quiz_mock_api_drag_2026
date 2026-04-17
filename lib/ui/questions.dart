@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quiz/style/colors.dart';
 import './widgets/janelas.dart';
 import '../api.dart';
 
@@ -16,7 +17,9 @@ class Questions extends StatefulWidget {
 
 class _QuestionsState extends State<Questions> {
   List<dynamic> questions = [];
-  int indice = 0, pontos = 0;
+  int indice = 0, pontos = 0, opcao = -1;
+  bool habilitarProxima = false;
+
   @override
   initState() {
     super.initState();
@@ -47,8 +50,8 @@ class _QuestionsState extends State<Questions> {
     }
   }
 
-  void alternativa(int num) {
-    if (questions[indice]['correct'] == num) {
+  void alternativa() {
+    if (questions[indice]['correct'] - 1 == opcao) {
       pontos++;
       Janelas.msgDialog(
         "Resposta correta",
@@ -62,9 +65,18 @@ class _QuestionsState extends State<Questions> {
         context,
       );
     }
+    setState(() {
+      habilitarProxima = true;
+      opcao = -1;
+    });
+  }
+
+  void proxima() {
     if (indice < questions.length - 1) {
       setState(() {
         indice++;
+        opcao = -1;
+        habilitarProxima = false;
       });
     } else {
       Janelas.msgDialog("Fim do quiz", "Você fez $pontos pontos", context);
@@ -99,12 +111,30 @@ class _QuestionsState extends State<Questions> {
                   spacing: 20,
                   children: [
                     Text(questions[indice]['question']),
-                    ...List.generate(
-                      questions[indice]['answers'].length,
-                      (i) => ElevatedButton(
-                        onPressed: () => alternativa(i + 1),
-                        child: Text(questions[indice]['answers'][i]),
+                    RadioGroup<int>(
+                      onChanged: (value) => setState(() {
+                        opcao = value!;
+                      }),
+                      groupValue: opcao,
+                      child: Column(
+                        children: [
+                          ...List.generate(
+                            questions[indice]['answers'].length,
+                            (i) => RadioListTile(
+                              title: Text(questions[indice]['answers'][i]),
+                              value: i,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    ElevatedButton(
+                      onPressed: opcao == -1 ? null : alternativa,
+                      child: Text("Responder"),
+                    ),
+                    ElevatedButton(
+                      onPressed: habilitarProxima ? proxima : null,
+                      child: Text("Próxima questão"),
                     ),
                   ],
                 )
@@ -113,6 +143,29 @@ class _QuestionsState extends State<Questions> {
                   spacing: 20,
                   children: [
                     Text(questions[indice]['question']),
+                    ...List.generate(
+                      questions[indice]['answers'].length,
+                      (i) => Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.c4,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.c2, width: 1),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.t2,
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(questions[indice]['answers'][i]),
+                        ),
+                      ),
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         if (indice < questions.length - 1) {

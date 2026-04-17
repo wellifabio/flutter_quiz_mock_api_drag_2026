@@ -6,7 +6,12 @@ abstract class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: WidgetStatePropertyAll(AppColors.c4),
-        backgroundColor: WidgetStateColor.resolveWith((states) => AppColors.c1),
+        backgroundColor: WidgetStateProperty.fromMap({
+          WidgetState.pressed: AppColors.c1,
+          WidgetState.hovered: AppColors.c2,
+          WidgetState.disabled: AppColors.t2,
+          WidgetState.any: AppColors.c1,
+        }),
       ),
     ),
     textTheme: TextTheme(
