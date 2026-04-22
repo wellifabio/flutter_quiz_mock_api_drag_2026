@@ -115,6 +115,7 @@ class _QuestionsState extends State<Questions> {
         ...List.generate(
           partes.length,
           (i) => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(partes[i]),
               if (i < partes.length - 1)
