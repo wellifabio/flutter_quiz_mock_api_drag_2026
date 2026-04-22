@@ -19,6 +19,7 @@ class _QuestionsState extends State<Questions> {
   List<dynamic> questions = [];
   int indice = 0, pontos = 0, opcao = -1;
   bool respondendo = true;
+  List<String> palavrasAlvo = [];
 
   @override
   initState() {
@@ -33,6 +34,7 @@ class _QuestionsState extends State<Questions> {
       if (response.statusCode == 200) {
         setState(() {
           questions = json.decode(response.body);
+          _resetLacunasAtuais();
         });
       } else {
         if (mounted) {
@@ -76,16 +78,75 @@ class _QuestionsState extends State<Questions> {
         indice++;
         respondendo = true;
         opcao = -1;
+        _resetLacunasAtuais();
       });
     } else {
       Janelas.msgDialog("Fim do quiz", "Você fez $pontos pontos", context);
     }
   }
 
+  void _resetLacunasAtuais() {
+    if (questions.isEmpty) {
+      palavrasAlvo = [];
+      return;
+    }
+
+    final partes = questions[indice]['question'].toString().split('_');
+    final quantidadeLacunas = partes.length - 1;
+    palavrasAlvo = List.generate(quantidadeLacunas, (_) => "______");
+  }
+
   void backToSplash() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Splash()),
+    );
+  }
+
+  Column lacunas(int indice) {
+    List<String> partes = questions[indice]['question'].split('_');
+
+    if (palavrasAlvo.length != partes.length - 1) {
+      _resetLacunasAtuais();
+    }
+
+    return Column(
+      children: [
+        ...List.generate(
+          partes.length,
+          (i) => Row(
+            children: [
+              Text(partes[i]),
+              if (i < partes.length - 1)
+                DragTarget<int>(
+                  builder: (context, candidateData, child) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.c4,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: AppColors.c2, width: 1),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          palavrasAlvo[i],
+                          style: TextStyle(color: AppColors.c1, fontSize: 16),
+                        ),
+                      ),
+                    );
+                  },
+                  onAcceptWithDetails: (details) {
+                    setState(() {
+                      palavrasAlvo[i] =
+                          questions[indice]['answers'][details.data].toString();
+                    });
+                  },
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -142,7 +203,7 @@ class _QuestionsState extends State<Questions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 20,
                   children: [
-                    Text(questions[indice]['question']),
+                    lacunas(indice),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 20,
@@ -150,7 +211,7 @@ class _QuestionsState extends State<Questions> {
                         ...List.generate(
                           questions[indice]['answers'].length,
                           (i) => Draggable<int>(
-                            data: indice,
+                            data: i,
                             feedback: Container(
                               margin: EdgeInsets.symmetric(vertical: 5),
                               decoration: BoxDecoration(
@@ -220,6 +281,7 @@ class _QuestionsState extends State<Questions> {
                         if (indice < questions.length - 1) {
                           setState(() {
                             indice++;
+                            _resetLacunasAtuais();
                           });
                         } else {
                           Janelas.msgDialog(
