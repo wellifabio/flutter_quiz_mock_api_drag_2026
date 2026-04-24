@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:quiz/style/colors.dart';
+import 'package:quiz/ui/style/colors.dart';
 import './widgets/janelas.dart';
-import '../api.dart';
+import '../root/api.dart';
 
 import 'splash.dart';
 
@@ -72,6 +72,36 @@ class _QuestionsState extends State<Questions> {
     });
   }
 
+  void responderLacunas() {
+    final respostas = questions[indice]['answers'];
+    bool todasCorretas = true;
+
+    for (int i = 0; i < palavrasAlvo.length; i++) {
+      if (palavrasAlvo[i] != respostas[i]) {
+        todasCorretas = false;
+        break;
+      }
+    }
+
+    if (todasCorretas) {
+      pontos++;
+      Janelas.msgDialog(
+        "Resposta correta",
+        "Parabéns, você acertou! $pontos pontos",
+        context,
+      );
+    } else {
+      Janelas.msgDialog(
+        "Resposta incorreta",
+        "Você tem $pontos pontos",
+        context,
+      );
+    }
+    setState(() {
+      respondendo = false;
+    });
+  }
+
   void proxima() {
     if (indice < questions.length - 1) {
       setState(() {
@@ -105,9 +135,14 @@ class _QuestionsState extends State<Questions> {
 
   Column lacunas(int indice) {
     List<String> partes = questions[indice]['question'].split('_');
+    List<int> respostas = [];
 
     if (palavrasAlvo.length != partes.length - 1) {
       _resetLacunasAtuais();
+    }
+
+    if (respostas.length == questions[indice]['correct'].length) {
+      respondendo = false;
     }
 
     return Column(
@@ -141,6 +176,7 @@ class _QuestionsState extends State<Questions> {
                     setState(() {
                       palavrasAlvo[i] =
                           questions[indice]['answers'][details.data].toString();
+                      respostas.add(details.data);
                     });
                   },
                 ),
@@ -278,20 +314,13 @@ class _QuestionsState extends State<Questions> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        if (indice < questions.length - 1) {
-                          setState(() {
-                            indice++;
-                            _resetLacunasAtuais();
-                          });
-                        } else {
-                          Janelas.msgDialog(
-                            "Fim do quiz",
-                            "Você fez $pontos pontos",
-                            context,
-                          );
-                        }
-                      },
+                      onPressed: opcao == -1 || !respondendo
+                          ? null
+                          : responderLacunas,
+                      child: Text("Responder"),
+                    ),
+                    ElevatedButton(
+                      onPressed: respondendo ? null : proxima,
                       child: Text("Próxima questão"),
                     ),
                   ],

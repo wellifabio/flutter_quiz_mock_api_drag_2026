@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:quiz/ui/questions.dart';
-import '../style/colors.dart';
+import 'style/colors.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
