@@ -1,3 +1,4 @@
+import 'package:english_quiz/ui/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,7 @@ class End extends StatefulWidget {
 class _EndState extends State<End> {
   final fileManager = FileManager();
   String fileData = "";
-  List<dynamic> Endados = [];
+  List<dynamic> resultados = [];
 
   @override
   initState() {
@@ -31,7 +32,7 @@ class _EndState extends State<End> {
     if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Endado salvo com sucesso!")));
+      ).showSnackBar(SnackBar(content: Text("Resultado salvo com sucesso!")));
     }
     loadEnds();
   }
@@ -41,14 +42,14 @@ class _EndState extends State<End> {
     if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Endados limpos com sucesso!")));
+      ).showSnackBar(SnackBar(content: Text("Resultados limpos com sucesso!")));
     }
     loadEnds();
   }
 
   void loadEnds() async {
     String data = await fileManager.readData();
-    Endados = [];
+    resultados = [];
     setState(() {
       fileData = data;
       carregarLista();
@@ -60,7 +61,7 @@ class _EndState extends State<End> {
     for (int i = 0; i < linhas.length; i++) {
       List<String> partes = linhas[i].split(",");
       if (partes.length >= 3) {
-        Endados.add({
+        resultados.add({
           "data": partes[0],
           "nome": partes[1],
           "pontos": partes[2],
@@ -73,13 +74,13 @@ class _EndState extends State<End> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Endado")),
+      appBar: AppBar(title: Text("Resultado")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 40,
+          spacing: 20,
           children: [
-            Image.asset('assets/icone.png', width: 250),
+            Image.asset('assets/av4.webp', width: 250),
             Text(
               "Parabéns ${widget.nome ?? ''} você acertou ${widget.pontos} questões \nde um total de ${widget.total ?? 0} questões",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -91,33 +92,42 @@ class _EndState extends State<End> {
                 ElevatedButton(onPressed: saveEnd, child: Text("Salvar")),
                 ElevatedButton(onPressed: limparArquivo, child: Text("Limpar")),
                 ElevatedButton(
-                  onPressed: () => SystemNavigator.pop(),
-                  child: Text("Encerrar"),
+                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash())),
+                  child: Text("Reiniciar"),
                 ),
               ],
             ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(12.0),
-                child: Endados.isNotEmpty
+                child: resultados.isNotEmpty
                     ? ListView.separated(
                         itemBuilder: (context, i) {
                           return ListTile(
                             leading: Text(
-                              "${DateFormat('dd/MM/yyyy').format(DateTime.parse(Endados[i]["data"].toString()))}\n${DateFormat('hh:mm').format(DateTime.parse(Endados[i]["data"].toString()))}h",
+                              "${DateFormat('dd/MM/yyyy').format(DateTime.parse(resultados[i]["data"].toString()))}\n${DateFormat('hh:mm').format(DateTime.parse(resultados[i]["data"].toString()))}h",
                               textAlign: TextAlign.center,
                             ),
-                            title: Text(Endados[i]["nome"]),
+                            title: Text(resultados[i]["nome"]),
                             subtitle: Text(
-                              "Total de questões: ${Endados[i]["total"]}",
+                              "Total de questões: ${resultados[i]["total"]}",
                             ),
-                            trailing: Text("Acertos: ${Endados[i]["pontos"]}"),
+                            trailing: Text(
+                              "Acertos: ${resultados[i]["pontos"]}",
+                            ),
                           );
                         },
                         separatorBuilder: (_, _) => Divider(),
-                        itemCount: Endados.length,
+                        itemCount: resultados.length,
                       )
-                    : Center(child: Text("Nenhum Endado registrado.")),
+                    : Center(child: Text("Nenhum Resultado registrado.")),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0,0,0,50),
+              child: ElevatedButton(
+                onPressed: () => SystemNavigator.pop(),
+                child: Text("Encerrar"),
               ),
             ),
           ],

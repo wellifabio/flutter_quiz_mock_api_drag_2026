@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:quiz/ui/questions.dart';
+import 'questions.dart';
 import 'style/colors.dart';
 
 class Splash extends StatefulWidget {
@@ -15,6 +15,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   late AnimationController _emtra1, _emtra2, _emtra3;
   late AnimationController _sai1, _sai2, _sai3;
   double _move1 = 0, _move2 = 0, _move3 = 0;
+  String _nome = "";
 
   @override
   void initState() {
@@ -81,19 +82,27 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   }
 
   void startSaida() {
-    saida();
-    _sai3.forward();
-    Timer(Duration(milliseconds: 300), () => _sai2.forward());
-    Timer(Duration(milliseconds: 600), () => _sai1.forward());
-    if (mounted) {
-      Timer(Duration(milliseconds: 900), () => goToQuestions());
+    if (_nome != "") {
+      saida();
+      _sai3.forward();
+      Timer(Duration(milliseconds: 300), () => _sai2.forward());
+      Timer(Duration(milliseconds: 600), () => _sai1.forward());
+      if (mounted) {
+        Timer(Duration(milliseconds: 900), () => goToQuestions());
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Preencha o seu nome!")),
+        );
+      }
     }
   }
 
   void goToQuestions() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => Questions()),
+      MaterialPageRoute(builder: (context) => Questions(nome: _nome)),
     );
   }
 
@@ -113,7 +122,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 30,
+            spacing: 20,
             children: [
               Transform.translate(
                 offset: Offset(0, _move1),
@@ -137,6 +146,28 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                     });
                   },
                   child: Image.asset("assets/av1.webp", height: 200),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(0, _move2),
+                child: Padding(
+                  padding: EdgeInsets.all(18.0),
+                  child: TextField(
+                    style: TextStyle(color: AppColors.c1),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Digite seu nome",
+                      labelStyle: TextStyle(color: AppColors.c2),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.c2, width: 2.0),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _nome = value;
+                      });
+                    },
+                  ),
                 ),
               ),
               Transform.translate(

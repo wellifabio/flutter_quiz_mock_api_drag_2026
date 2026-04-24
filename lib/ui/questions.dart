@@ -1,15 +1,17 @@
 import 'dart:convert';
 
+import 'package:english_quiz/ui/end.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:quiz/ui/style/colors.dart';
+import './style/colors.dart';
 import './widgets/janelas.dart';
 import '../root/api.dart';
 
 import 'splash.dart';
 
 class Questions extends StatefulWidget {
-  const Questions({super.key});
+  final String nome;
+  const Questions({super.key, required this.nome});
 
   @override
   State<Questions> createState() => _QuestionsState();
@@ -18,7 +20,7 @@ class Questions extends StatefulWidget {
 class _QuestionsState extends State<Questions> {
   List<dynamic> questions = [];
   int indice = 0, pontos = 0, opcao = -1;
-  bool respondendo = true;
+  bool respondendo = true, respondido = false;
   List<String> palavrasAlvo = [];
 
   @override
@@ -56,44 +58,54 @@ class _QuestionsState extends State<Questions> {
     if (questions[indice]['correct'] - 1 == opcao) {
       pontos++;
       Janelas.msgDialog(
-        "Resposta correta",
+        "assets/av5.webp",
         "Parabéns, você acertou! $pontos pontos",
         context,
       );
     } else {
       Janelas.msgDialog(
-        "Resposta incorreta",
-        "Você tem $pontos pontos",
+        "assets/av6.webp",
+        "Que pena continua com $pontos pontos",
         context,
       );
     }
     setState(() {
       respondendo = false;
+      respondido = true;
     });
   }
 
   void responderLacunas() {
-    final respostas = questions[indice]['answers'];
     bool todasCorretas = true;
+    setState(() {
+      respondendo = false;
+      respondido = true;
+    });
 
     for (int i = 0; i < palavrasAlvo.length; i++) {
-      if (palavrasAlvo[i] != respostas[i]) {
+      if (palavrasAlvo[i] != questions[indice]['correct'][i]) {
         todasCorretas = false;
         break;
       }
     }
 
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(questions[indice]['correct'].toString())),
+      );
+    }
+
     if (todasCorretas) {
       pontos++;
       Janelas.msgDialog(
-        "Resposta correta",
+        "assets/av5.webp",
         "Parabéns, você acertou! $pontos pontos",
         context,
       );
     } else {
       Janelas.msgDialog(
-        "Resposta incorreta",
-        "Você tem $pontos pontos",
+        "assets/av6.webp",
+        "Que pena continua com $pontos pontos",
         context,
       );
     }
@@ -102,16 +114,13 @@ class _QuestionsState extends State<Questions> {
     });
   }
 
-  void proxima() {
-    if (indice < questions.length - 1) {
-      setState(() {
-        indice++;
-        respondendo = true;
-        opcao = -1;
-        _resetLacunasAtuais();
-      });
-    } else {
-      Janelas.msgDialog("Fim do quiz", "Você fez $pontos pontos", context);
+  void conferirLacunasPreenchidas() {
+    respondido = true;
+    for (int i = 0; i < palavrasAlvo.length; i++) {
+      if (palavrasAlvo[i] == "______") {
+        respondido = false;
+        break;
+      }
     }
   }
 
@@ -126,6 +135,20 @@ class _QuestionsState extends State<Questions> {
     palavrasAlvo = List.generate(quantidadeLacunas, (_) => "______");
   }
 
+  void proxima() {
+    if (indice < questions.length - 1) {
+      setState(() {
+        indice++;
+        respondendo = true;
+        respondido = false;
+        opcao = -1;
+        _resetLacunasAtuais();
+      });
+    } else {
+      goToEnd();
+    }
+  }
+
   void backToSplash() {
     Navigator.pushReplacement(
       context,
@@ -133,16 +156,21 @@ class _QuestionsState extends State<Questions> {
     );
   }
 
+  void goToEnd() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            End(pontos: pontos, total: questions.length, nome: widget.nome),
+      ),
+    );
+  }
+
   Column lacunas(int indice) {
     List<String> partes = questions[indice]['question'].split('_');
-    List<int> respostas = [];
 
     if (palavrasAlvo.length != partes.length - 1) {
       _resetLacunasAtuais();
-    }
-
-    if (respostas.length == questions[indice]['correct'].length) {
-      respondendo = false;
     }
 
     return Column(
@@ -167,7 +195,7 @@ class _QuestionsState extends State<Questions> {
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           palavrasAlvo[i],
-                          style: TextStyle(color: AppColors.c1, fontSize: 16),
+                          style: TextStyle(color: AppColors.c1, fontSize: 14),
                         ),
                       ),
                     );
@@ -176,7 +204,7 @@ class _QuestionsState extends State<Questions> {
                     setState(() {
                       palavrasAlvo[i] =
                           questions[indice]['answers'][details.data].toString();
-                      respostas.add(details.data);
+                      conferirLacunasPreenchidas();
                     });
                   },
                 ),
@@ -195,10 +223,11 @@ class _QuestionsState extends State<Questions> {
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: backToSplash,
         ),
-        title: Text('Quiz'),
+        title: Text("Player: ${widget.nome}"),
+        actions: [ElevatedButton(onPressed: goToEnd, child: Text("Concluir"))],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: EdgeInsets.all(18.0),
         child: Center(
           child: questions.isEmpty
               ? CircularProgressIndicator()
@@ -207,6 +236,7 @@ class _QuestionsState extends State<Questions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 20,
                   children: [
+                    Image.asset("assets/av2.webp", width: 250,),
                     Text(questions[indice]['question']),
                     RadioGroup<int>(
                       onChanged: (value) => setState(() {
@@ -231,8 +261,20 @@ class _QuestionsState extends State<Questions> {
                       child: Text("Responder"),
                     ),
                     ElevatedButton(
-                      onPressed: respondendo ? null : proxima,
+                      onPressed: respondido ? proxima : null,
                       child: Text("Próxima questão"),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: LinearProgressIndicator(
+                        value:
+                            1 /
+                            questions.length *
+                            (indice + 1), // % de progresso
+                        minHeight: 15, // Altura da barra
+                        backgroundColor: AppColors.c3,
+                        color: AppColors.c2,
+                      ),
                     ),
                   ],
                 )
@@ -240,6 +282,7 @@ class _QuestionsState extends State<Questions> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: 20,
                   children: [
+                    Image.asset("assets/av3.webp", width: 250,),
                     lacunas(indice),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -266,6 +309,7 @@ class _QuestionsState extends State<Questions> {
                                   style: TextStyle(
                                     color: AppColors.c1,
                                     fontSize: 16,
+                                    fontWeight: FontWeight.normal,
                                     decoration: TextDecoration.none,
                                   ),
                                 ),
@@ -314,14 +358,26 @@ class _QuestionsState extends State<Questions> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: opcao == -1 || !respondendo
-                          ? null
-                          : responderLacunas,
+                      onPressed: respondido && respondendo
+                          ? responderLacunas
+                          : null,
                       child: Text("Responder"),
                     ),
                     ElevatedButton(
-                      onPressed: respondendo ? null : proxima,
+                      onPressed: respondido && !respondendo ? proxima : null,
                       child: Text("Próxima questão"),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: LinearProgressIndicator(
+                        value:
+                            1 /
+                            questions.length *
+                            (indice + 1), // % de progresso
+                        minHeight: 15, // Altura da barra
+                        backgroundColor: AppColors.c3,
+                        color: AppColors.c2,
+                      ),
                     ),
                   ],
                 ),

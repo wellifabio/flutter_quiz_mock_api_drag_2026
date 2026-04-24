@@ -5,7 +5,7 @@ abstract class Janelas {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(titulo),
+        title: Image.asset(titulo, width: 120),
         content: Text(msg),
         actions: [
           ElevatedButton(
