@@ -15,9 +15,13 @@ abstract class AppTheme {
       ),
     ),
     textTheme: TextTheme(
-      bodyMedium: TextStyle(color: AppColors.c1),
-      labelMedium: TextStyle(color: AppColors.c1),
-      titleMedium: TextStyle(color: AppColors.c1),
+      bodyMedium: TextStyle(color: AppColors.c1, fontSize: 16),
+      labelMedium: TextStyle(color: AppColors.c1, fontSize: 16),
+      titleMedium: TextStyle(
+        color: AppColors.c1,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: AppColors.c2,
