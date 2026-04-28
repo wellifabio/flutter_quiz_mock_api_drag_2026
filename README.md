@@ -24,7 +24,9 @@ App simples de quiz que consome dados de uma Mockup API **JSON** hospedada em um
 - 3 Navegue até o arquivo lib/main.dart e dê **play** ou execute o comando `flutter run` para rodar o projeto
 - 4 Escolha navegador ou um emulador para testar, ou abra o arquivo */lib/main.dart* e clique em Play.
 
-|![Splash](./assets/info/Screenshot01.png)|![Questões](./assets/info/Screenshot02.png)|![Alternativa](./assets/info/Screenshot03.png)|
+## [Download apk](./assets/app-release.apk)
+
+|![Splash](./assets/info/screenshot01.png)|![Questões](./assets/info/screenshot02.png)|![Alternativa](./assets/info/screenshot03.png)|
 |:-:|:-:|:-:|
 |Splash|Questões|Alternativa|
 
