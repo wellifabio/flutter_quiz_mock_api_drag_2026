@@ -92,9 +92,9 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Preencha o seu nome!")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Preencha o seu nome!")));
       }
     }
   }
@@ -154,6 +154,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   padding: EdgeInsets.all(18.0),
                   child: TextField(
                     style: TextStyle(color: AppColors.c1),
+                    key: Key('nome'),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Digite seu nome",
@@ -178,6 +179,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       startSaida();
                     }),
                   },
+                  key: Key('iniciar'),
                   child: Text("Iniciar"),
                 ),
               ),

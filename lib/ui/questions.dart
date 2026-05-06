@@ -183,6 +183,7 @@ class _QuestionsState extends State<Questions> {
               Text(partes[i]),
               if (i < partes.length - 1)
                 DragTarget<int>(
+                  key: Key('lacuna$i'),
                   builder: (context, candidateData, child) {
                     return Container(
                       margin: EdgeInsets.symmetric(vertical: 5),
@@ -248,6 +249,7 @@ class _QuestionsState extends State<Questions> {
                         ...List.generate(
                           questions[indice]['answers'].length,
                           (i) => RadioListTile(
+                            key: Key('op${i + 1}'),
                             title: Text(
                               questions[indice]['answers'][i],
                               style: TextStyle(
@@ -264,10 +266,12 @@ class _QuestionsState extends State<Questions> {
                   ),
                   ElevatedButton(
                     onPressed: opcao == -1 || !respondendo ? null : responder,
+                    key: Key('responder'),
                     child: Text("Responder"),
                   ),
                   ElevatedButton(
                     onPressed: respondido ? proxima : null,
+                    key: Key('proxima'),
                     child: Text("Próxima questão"),
                   ),
                   ClipRRect(
@@ -295,6 +299,7 @@ class _QuestionsState extends State<Questions> {
                       ...List.generate(
                         questions[indice]['answers'].length,
                         (i) => Draggable<int>(
+                          key: Key('op${i + 1}'),
                           data: i,
                           feedback: Container(
                             margin: EdgeInsets.symmetric(vertical: 5),
@@ -356,10 +361,12 @@ class _QuestionsState extends State<Questions> {
                     onPressed: respondido && respondendo
                         ? responderLacunas
                         : null,
+                    key: Key('responder'),
                     child: Text("Responder"),
                   ),
                   ElevatedButton(
                     onPressed: respondido && !respondendo ? proxima : null,
+                    key: Key('proxima'),
                     child: Text("Próxima questão"),
                   ),
                   ClipRRect(

@@ -9,7 +9,8 @@ abstract class Janelas {
         content: Text(msg),
         actions: [
           ElevatedButton(
-            child: Text("Fechar"),
+            key: Key('ok'),
+            child: Text("Ok"),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

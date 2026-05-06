@@ -6,7 +6,7 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Quiz dinamico',
-      theme: AppTheme.apTheme,
+      theme: AppTheme.appTheme,
       home: Splash(),
     ),
   );

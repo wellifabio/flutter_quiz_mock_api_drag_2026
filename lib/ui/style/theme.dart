@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 
 abstract class AppTheme {
-  static ThemeData apTheme = ThemeData.light().copyWith(
+  static ThemeData appTheme = ThemeData.light().copyWith(
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: WidgetStatePropertyAll(AppColors.c4),
