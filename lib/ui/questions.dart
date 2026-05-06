@@ -225,7 +225,13 @@ class _QuestionsState extends State<Questions> {
           onPressed: backToSplash,
         ),
         title: Text("Player: ${widget.nome}"),
-        actions: [ElevatedButton(onPressed: goToEnd, child: Text("Concluir"))],
+        actions: [
+          ElevatedButton(
+            onPressed: goToEnd,
+            key: Key('concluir'),
+            child: Text("Concluir"),
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(18.0),

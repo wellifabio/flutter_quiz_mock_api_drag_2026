@@ -71,5 +71,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(Key('proxima')));
     await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.byKey(Key('concluir')));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 10));
   });
 }
