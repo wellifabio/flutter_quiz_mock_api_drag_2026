@@ -89,10 +89,22 @@ class _EndState extends State<End> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(onPressed: saveEnd, child: Text("Salvar")),
-                ElevatedButton(onPressed: limparArquivo, child: Text("Limpar")),
                 ElevatedButton(
-                  onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Splash())),
+                  onPressed: saveEnd,
+                  key: Key('salvar'),
+                  child: Text("Salvar"),
+                ),
+                ElevatedButton(
+                  onPressed: limparArquivo,
+                  key: Key('limpar'),
+                  child: Text("Limpar"),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Splash()),
+                  ),
+                  key: Key('reiniciar'),
                   child: Text("Reiniciar"),
                 ),
               ],
@@ -124,9 +136,10 @@ class _EndState extends State<End> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(0,0,0,50),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
               child: ElevatedButton(
                 onPressed: () => SystemNavigator.pop(),
+                key: Key('fechar'),
                 child: Text("Encerrar"),
               ),
             ),

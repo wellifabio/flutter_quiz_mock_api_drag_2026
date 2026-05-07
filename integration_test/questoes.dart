@@ -74,6 +74,12 @@ void main() {
     await tester.tap(find.byKey(Key('concluir')));
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
-    await tester.pump(const Duration(seconds: 10));
+    await tester.pump(const Duration(seconds: 2));
+    await tester.tap(find.byKey(Key('salvar')));
+    await tester.pump(const Duration(seconds: 4));
+    await tester.tap(find.byKey(Key('limpar')));
+    await tester.pump(const Duration(seconds: 2));
+    await tester.tap(find.byKey(Key('fechar')));
+    await tester.pump(const Duration(seconds: 1));
   });
 }
